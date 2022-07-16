@@ -1,0 +1,19 @@
+{
+  "name": "@fireenjin/orm",
+  "version": "1.0.0",
+  "description": "An isometric and event driven solution for wiring to your database",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/fireenjin/orm.git"
+  },
+  "author": "Madness Labs",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fireenjin/orm/issues"
+  },
+  "homepage": "https://github.com/fireenjin/orm#readme"
+}

@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "experimentalDecorators": true,
+        "lib": ["ES2015", "ES2017", "DOM"],
+        "outDir": "dist",
+    }
+}

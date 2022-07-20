@@ -348,7 +348,7 @@ function Relation({
       set(this: any, newValue: any) {
         console.log(`Set: ${key} => ${newValue}`);
         this[backingField] = newValue;
-        this.partial[key] = newValue;
+        this._partial[key] = newValue;
       },
       enumerable: true,
       configurable: true,
@@ -380,7 +380,7 @@ function Transform({
         const value = typeof set === "function" ? set(newValue) : newValue;
         console.log(`Transform Set: ${key} => ${value}`);
         this[backingField] = value;
-        this.partial[key] = value;
+        this._partial[key] = value;
       },
       enumerable: true,
       configurable: true,

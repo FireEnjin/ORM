@@ -66,16 +66,57 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _a, _b;
-function FireEnjinModel() {
-    var Resource = /** @class */ (function () {
-        function Resource(partial, options) {
-            this.partial = partial;
-            Object.assign(this, this.partial);
-            this.storagePath = (options === null || options === void 0 ? void 0 : options.storagePath) || this.constructor.name;
-            // options?.storagePath || pluralize(this.constructor.name);
+var _a;
+function FireEnjinModel(_a) {
+    var _b = _a === void 0 ? {} : _a, hooks = _b.hooks, driver = _b.driver;
+    var BaseModel = /** @class */ (function () {
+        function BaseModel(_partial, options) {
+            if (_partial === void 0) { _partial = {}; }
+            this._partial = _partial;
+            this._filterKeys = [];
+            if (typeof (hooks === null || hooks === void 0 ? void 0 : hooks.beforeInit) === "function")
+                hooks.beforeInit();
+            Object.assign(this, this._partial);
+            this._storagePath =
+                (options === null || options === void 0 ? void 0 : options.storagePath) ||
+                    this.constructor.name.toLocaleLowerCase().replace(" ", "_");
+            this._filterKeys = (options === null || options === void 0 ? void 0 : options.filterKeys) || [];
+            if (typeof (hooks === null || hooks === void 0 ? void 0 : hooks.afterInit) === "function")
+                hooks.afterInit();
         }
-        Resource.add = function (input, id) {
+        BaseModel.add = function (input, id) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data, res;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            data = __assign({}, input);
+                            res = null;
+                            if (id)
+                                data.id = id;
+                            if (!(typeof (hooks === null || hooks === void 0 ? void 0 : hooks.beforeAdd) === "function")) return [3 /*break*/, 2];
+                            return [4 /*yield*/, hooks.beforeAdd(data)];
+                        case 1:
+                            data = _a.sent();
+                            _a.label = 2;
+                        case 2:
+                            if (!(typeof (driver === null || driver === void 0 ? void 0 : driver.add) === "function")) return [3 /*break*/, 4];
+                            return [4 /*yield*/, driver.add(data)];
+                        case 3:
+                            res = _a.sent();
+                            _a.label = 4;
+                        case 4:
+                            if (!(typeof (hooks === null || hooks === void 0 ? void 0 : hooks.afterAdd) === "function")) return [3 /*break*/, 6];
+                            return [4 /*yield*/, hooks.afterAdd(res)];
+                        case 5:
+                            res = _a.sent();
+                            _a.label = 6;
+                        case 6: return [2 /*return*/, res];
+                    }
+                });
+            });
+        };
+        BaseModel.edit = function (id, input) {
             return __awaiter(this, void 0, void 0, function () {
                 var data;
                 return __generator(this, function (_a) {
@@ -86,18 +127,7 @@ function FireEnjinModel() {
                 });
             });
         };
-        Resource.edit = function (id, input) {
-            return __awaiter(this, void 0, void 0, function () {
-                var data;
-                return __generator(this, function (_a) {
-                    data = __assign({}, input);
-                    if (id)
-                        data.id = id;
-                    return [2 /*return*/, data];
-                });
-            });
-        };
-        Resource.delete = function (id) {
+        BaseModel.delete = function (id) {
             return __awaiter(this, void 0, void 0, function () {
                 var data;
                 return __generator(this, function (_a) {
@@ -106,7 +136,7 @@ function FireEnjinModel() {
                 });
             });
         };
-        Resource.find = function (id) {
+        BaseModel.find = function (id) {
             return __awaiter(this, void 0, void 0, function () {
                 var data;
                 return __generator(this, function (_a) {
@@ -115,28 +145,29 @@ function FireEnjinModel() {
                 });
             });
         };
-        Resource.list = function () {
+        BaseModel.list = function () {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, []];
                 });
             });
         };
-        Resource.prototype.save = function () {
-            console.log(this);
+        BaseModel.prototype.save = function () {
+            console.log("Saving: ", this);
             return {};
         };
-        Resource.prototype.data = function () {
+        BaseModel.prototype.data = function () {
             for (var _i = 0, _a = Object.entries(this); _i < _a.length; _i++) {
                 var _b = _a[_i], key = _b[0], value = _b[1];
-                console.log(key, value);
-                this.partial[key] = value;
+                if (!key || this._filterKeys.includes(key) || key.charAt(0) === "_")
+                    continue;
+                this._partial[key] = value;
             }
-            return this.partial;
+            return this._partial;
         };
-        return Resource;
+        return BaseModel;
     }());
-    return Resource;
+    return BaseModel;
 }
 function Model(_a) {
     var _b = _a === void 0 ? {} : _a, storagePath = _b.storagePath;
@@ -161,9 +192,36 @@ function Relation(_a) {
                 return currentValue;
             },
             set: function (newValue) {
-                if (newValue === null || newValue === void 0 ? void 0 : newValue.id)
-                    console.log("Set: ".concat(key, " => ").concat(newValue));
+                console.log("Set: ".concat(key, " => ").concat(newValue));
                 this[backingField] = newValue;
+                this.partial[key] = newValue;
+            },
+            enumerable: true,
+            configurable: true,
+        });
+    };
+}
+function Transform(_a) {
+    var _b = _a === void 0 ? {} : _a, get = _b.get, set = _b.set;
+    return function (target, key) {
+        delete target[key];
+        var backingField = "_" + key;
+        Object.defineProperty(target, backingField, {
+            writable: true,
+            enumerable: true,
+            configurable: true,
+        });
+        Object.defineProperty(target, key, {
+            get: function () {
+                var currentValue = this[backingField];
+                console.log("Transform Get: ".concat(key, " => ").concat(currentValue));
+                return typeof get === "function" ? get(currentValue) : currentValue;
+            },
+            set: function (newValue) {
+                var value = typeof set === "function" ? set(newValue) : newValue;
+                console.log("Transform Set: ".concat(key, " => ").concat(value));
+                this[backingField] = value;
+                this.partial[key] = value;
             },
             enumerable: true,
             configurable: true,
@@ -186,13 +244,22 @@ var Test = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     __decorate([
+        Transform({ set: function (val) { return "waa-".concat(val); }, get: function (val) { return "".concat(val, "-wii"); } })
+    ], Test.prototype, "wee", void 0);
+    __decorate([
         Relation({ model: User })
     ], Test.prototype, "user", void 0);
     Test = __decorate([
         Model()
     ], Test);
     return Test;
-}(FireEnjinModel()));
+}(FireEnjinModel({
+    hooks: {
+        beforeAdd: function () {
+            console.log("starting Test Model");
+        },
+    },
+})));
 var testing = new Test();
 testing.name = "wee";
 testing.wee = "woo";
@@ -201,5 +268,4 @@ testing.user = new User({
     firstName: "Bobby",
     lastName: "Johnson",
 });
-console.log((_b = testing.user) === null || _b === void 0 ? void 0 : _b.firstName);
-testing.save();
+console.log(testing.wee, testing.data());

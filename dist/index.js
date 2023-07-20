@@ -1,18 +1,4 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
+"use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -23,12 +9,6 @@ var __assign = (this && this.__assign) || function () {
         return t;
     };
     return __assign.apply(this, arguments);
-};
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -66,7 +46,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _this = this;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Transform = exports.Relation = exports.Model = exports.FireEnjinModel = void 0;
 function FireEnjinModel(_a) {
     var _b = _a === void 0 ? {} : _a, hooks = _b.hooks, driver = _b.driver;
     var BaseModel = /** @class */ (function () {
@@ -169,12 +150,14 @@ function FireEnjinModel(_a) {
     }());
     return BaseModel;
 }
+exports.FireEnjinModel = FireEnjinModel;
 function Model(_a) {
     var _b = _a === void 0 ? {} : _a, storagePath = _b.storagePath;
     return function (constructor) {
         console.log(constructor);
     };
 }
+exports.Model = Model;
 function Relation(_a) {
     var _b = _a === void 0 ? {} : _a, model = _b.model, storagePath = _b.storagePath;
     return function (target, key) {
@@ -201,6 +184,7 @@ function Relation(_a) {
         });
     };
 }
+exports.Relation = Relation;
 function Transform(_a) {
     var _b = _a === void 0 ? {} : _a, get = _b.get, set = _b.set;
     return function (target, key) {
@@ -228,57 +212,4 @@ function Transform(_a) {
         });
     };
 }
-var User = /** @class */ (function (_super) {
-    __extends(User, _super);
-    function User() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    User = __decorate([
-        Model()
-    ], User);
-    return User;
-}(FireEnjinModel()));
-var Test = /** @class */ (function (_super) {
-    __extends(Test, _super);
-    function Test() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    __decorate([
-        Transform({ set: function (val) { return "waa-".concat(val); }, get: function (val) { return "".concat(val, "-wii"); } })
-    ], Test.prototype, "wee", void 0);
-    __decorate([
-        Relation({ model: User })
-    ], Test.prototype, "user", void 0);
-    Test = __decorate([
-        Model()
-    ], Test);
-    return Test;
-}(FireEnjinModel({
-    hooks: {
-        beforeAdd: function () {
-            console.log("starting Test Model");
-        },
-    },
-})));
-(function () { return __awaiter(_this, void 0, void 0, function () {
-    var testing, u;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                testing = new Test();
-                testing.name = "wee";
-                testing.wee = "woo";
-                console.log((_a = testing.user) === null || _a === void 0 ? void 0 : _a.firstName);
-                testing.user = new User({
-                    firstName: "Bobby",
-                    lastName: "Johnson",
-                });
-                return [4 /*yield*/, User.find(testing.user.id)];
-            case 1:
-                u = _b.sent();
-                console.log(testing.wee, testing.data());
-                return [2 /*return*/];
-        }
-    });
-}); })();
+exports.Transform = Transform;

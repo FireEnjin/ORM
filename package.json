@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "An isometric and event driven solution for wiring to your database",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "start": "tsc -w",

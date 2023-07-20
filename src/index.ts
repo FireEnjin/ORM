@@ -241,12 +241,12 @@ export function FireEnjinModel<T, Y = void>({
   };
 } = {}) {
   abstract class BaseModel {
-    private _storagePath: string;
-    private _filterKeys: string[] = [];
+    _storagePath: string;
+    _filterKeys: string[] = [];
     id?: ID;
 
     constructor(
-      protected _partial: Partial<T> = {},
+      public _partial: Partial<T> = {},
       options?: {
         storagePath?: string;
         filterKeys?: string[];

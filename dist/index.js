@@ -45,7 +45,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -66,7 +66,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _a;
+var _this = this;
 function FireEnjinModel(_a) {
     var _b = _a === void 0 ? {} : _a, hooks = _b.hooks, driver = _b.driver;
     var BaseModel = /** @class */ (function () {
@@ -194,7 +194,7 @@ function Relation(_a) {
             set: function (newValue) {
                 console.log("Set: ".concat(key, " => ").concat(newValue));
                 this[backingField] = newValue;
-                this.partial[key] = newValue;
+                this._partial[key] = newValue;
             },
             enumerable: true,
             configurable: true,
@@ -221,7 +221,7 @@ function Transform(_a) {
                 var value = typeof set === "function" ? set(newValue) : newValue;
                 console.log("Transform Set: ".concat(key, " => ").concat(value));
                 this[backingField] = value;
-                this.partial[key] = value;
+                this._partial[key] = value;
             },
             enumerable: true,
             configurable: true,
@@ -260,12 +260,25 @@ var Test = /** @class */ (function (_super) {
         },
     },
 })));
-var testing = new Test();
-testing.name = "wee";
-testing.wee = "woo";
-console.log((_a = testing.user) === null || _a === void 0 ? void 0 : _a.firstName);
-testing.user = new User({
-    firstName: "Bobby",
-    lastName: "Johnson",
-});
-console.log(testing.wee, testing.data());
+(function () { return __awaiter(_this, void 0, void 0, function () {
+    var testing, u;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                testing = new Test();
+                testing.name = "wee";
+                testing.wee = "woo";
+                console.log((_a = testing.user) === null || _a === void 0 ? void 0 : _a.firstName);
+                testing.user = new User({
+                    firstName: "Bobby",
+                    lastName: "Johnson",
+                });
+                return [4 /*yield*/, User.find(testing.user.id)];
+            case 1:
+                u = _b.sent();
+                console.log(testing.wee, testing.data());
+                return [2 /*return*/];
+        }
+    });
+}); })();

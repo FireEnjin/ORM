@@ -1,6 +1,6 @@
 declare type ID = string | number;
 
-function FireEnjinModel<T, Y = void>({
+export function FireEnjinModel<T, Y = void>({
   hooks,
   driver,
 }: {
@@ -284,8 +284,8 @@ function FireEnjinModel<T, Y = void>({
       return data;
     }
 
-    static async find(id: ID) {
-      const data = { id };
+    static async find(id: ID): Promise<T> {
+      const data = { id } as T;
       return data;
     }
 
@@ -312,7 +312,7 @@ function FireEnjinModel<T, Y = void>({
   return BaseModel;
 }
 
-function Model({
+export function Model({
   storagePath,
 }: {
   storagePath?: string;
@@ -322,7 +322,7 @@ function Model({
   };
 }
 
-function Relation({
+export function Relation({
   model,
   storagePath,
 }: {
@@ -356,7 +356,7 @@ function Relation({
   };
 }
 
-function Transform({
+export function Transform({
   get,
   set,
 }: { get?: (value) => any; set?: (value) => any } = {}) {
@@ -387,53 +387,3 @@ function Transform({
     });
   };
 }
-
-@Model()
-class User extends FireEnjinModel<User>() {
-  /**
-   * The person's first name
-   */
-  firstName: string;
-  /**
-   * The person's last name
-   */
-  lastName?: string;
-  /**
-   * The photo for the person
-   */
-  photo?: string;
-}
-
-@Model()
-class Test extends FireEnjinModel<Test>({
-  hooks: {
-    beforeAdd() {
-      console.log("starting Test Model");
-    },
-  },
-}) {
-  /**
-   * Name of the record
-   */
-  name?: string;
-  /**
-   * Woo
-   */
-  @Transform({ set: (val) => `waa-${val}`, get: (val) => `${val}-wii` })
-  wee?: string;
-  /**
-   * The User tied
-   */
-  @Relation({ model: User })
-  user: User;
-}
-
-const testing = new Test();
-testing.name = "wee";
-testing.wee = "woo";
-console.log(testing.user?.firstName);
-testing.user = new User({
-  firstName: "Bobby",
-  lastName: "Johnson",
-});
-console.log(testing.wee, testing.data());

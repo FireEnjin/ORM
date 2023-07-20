@@ -293,9 +293,14 @@ export function FireEnjinModel<T, Y = void>({
       return [];
     }
 
-    public save() {
-      console.log("Saving: ", this);
-      return {};
+    public async save() {
+      let data = this.data();
+      if (typeof hooks?.beforeWrite === "function")
+        data = await hooks.beforeWrite(data);
+      // TODO: Add save logic (if id exists, edit, else add)
+      if (typeof hooks?.afterWrite === "function")
+        data = await hooks.afterWrite(data);
+      return data;
     }
 
     public data() {
